@@ -9,8 +9,31 @@ fn main() {
     };
 
     let lines = read_lines(filename);
+
     let possible_games = possible_games(&lines);
-    println!("{possible_games}");
+    let sum_power_sets = sum_power_sets(&lines);
+    println!("possible games: {possible_games}");
+    println!("sum of power of sets: {sum_power_sets}");
+}
+
+fn sum_power_sets(lines: &[String]) -> i32 {
+    let mut acc = 0;
+    for line in lines {
+        let game: Vec<&str> = line.split(":").collect();
+        let draws: Vec<&str> = game[1].split(';').collect();
+        acc += power_set(&draws);
+    }
+
+    acc
+}
+
+fn power_set(draws: &Vec<&str>) -> i32 {
+    let cube_counts: Vec<CubeCounts> = draws.iter().map(|x| get_cubes(x)).collect();
+    let max_red = cube_counts.iter().map(|x| x.red).max();
+    let max_green = cube_counts.iter().map(|x| x.green).max();
+    let max_blue = cube_counts.iter().map(|x| x.blue).max();
+
+    max_red.unwrap() * max_blue.unwrap() * max_green.unwrap()
 }
 
 fn possible_games(lines: &[String]) -> i32 {
